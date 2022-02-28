@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>choreworld</title>
-	<script src="chores.js"></script>
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	<link rel="icon" type="image/png" href="assets/favicon.png">
 	<link rel="apple-touch-icon" href="assets/dishes-square.png">
@@ -13,9 +14,8 @@
 
 <img src="assets/dishes.jpg" style="width: 20%;">
 
-<p>
-<input id="date" type="date" name="date"/>
-</p>
+<p><label for="date">Select date</label></p>
+<p><input id="date" type="date" name="date"/></p>
 
 <h2>Chores for week ending <span id="week-end"></span></h2>
 
@@ -51,9 +51,9 @@
 <p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
 <p>choreworld v0.1 &copy; choreworld 2021</p>
 
+<script src="chores.js"></script>
 <script type="text/javascript">
-	document.open()
-
+(function () {
 	function update_page(offset) {
 		let all_chores = [
 			[
@@ -91,31 +91,31 @@
 					"Ashton"
 				]
 			]
-		]
+		];
 
 		for (let group = 0; group < all_chores.length; group++) {
-			let chores = all_chores[group][0]
-			let people = all_chores[group][1]
-			let assignments = assign_chores(offset, chores, people)
+			let chores = all_chores[group][0];
+			let people = all_chores[group][1];
+			let assignments = assign_chores(offset, chores, people);
 			for (let i = 0; i < chores.length; i++) {
-				let chore = chores[i]
-				document.getElementById(chore).innerText = assignments[chore]
+				let chore = chores[i];
+				document.getElementById(chore).innerText = assignments[chore];
 			}
 
-			document.getElementById("week-end").innerText = end_of_week(offset).toDateString()
+			document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
 		}
 	}
 
-	update_page(current_offset())
+	update_page(current_offset());
 
-	let datepicker = document.getElementById("date")
-	datepicker.onchange = function() {
-		let date = new Date(datepicker.value)
-		let offset = date_to_offset(date)
-		update_page(offset)
-	}
-
-	document.close()
+	let datepicker = document.getElementById("date");
+	datepicker.value = (new Date()).toISOString().split('T')[0];
+	datepicker.addEventListener("change", function (event) {
+		let date = new Date(datepicker.value);
+		let offset = date_to_offset(date);
+		update_page(offset);
+	});
+})();
 </script>
 
 </body>
