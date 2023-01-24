@@ -29,3 +29,14 @@ h1 {
 h1, h2, h3, h4 {
 	text-decoration: underline;
 }
+
+.badges {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.badges > * {
+	margin: 5px;
+}
