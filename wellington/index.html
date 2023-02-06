@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>choreworld, Wellington</title>
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/dishes-square.png">
+</head>
+<body>
+
+<main>
+
+<h1>Welcome to choreworld (Wellington edition)</h1>
+
+<form>
+    <label for="date">Select date</label>
+    <input id="date" type="date" name="date">
+</form>
+
+<h2>Chores for week ending <span id="week-end"></span></h2>
+
+<div class="chore">
+    <h3>Misc</h3>
+    <p id="misc"></p>
+</div>
+
+<div class="chore">
+    <h3>Floors</h3>
+    <p id="floors"></p>
+</div>
+
+<div class="chore">
+    <h3>Bathroom</h3>
+    <p id="bathroom"></p>
+</div>
+
+<div class="chore">
+    <h3>Kitchen</h3>
+    <p id="kitche">Alice</p>
+</div>
+
+</main>
+
+<footer>
+<p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
+<p>choreworld v0.1 &copy; choreworld 2023</p>
+</footer>
+
+<script src="../chores.js"></script>
+<script>
+(function () {
+    function update_page(offset) {
+        let all_chores = [
+            [
+                [
+                    "bathroom",
+                    "floors",
+                    "misc",
+                ],
+                [
+                    "Emma",
+                    "Charlotte",
+                    "Nick",
+                ]
+            ]
+        ];
+
+        for (let group = 0; group < all_chores.length; group++) {
+            let chores = all_chores[group][0];
+            let people = all_chores[group][1];
+            let assignments = assign_chores(offset, chores, people);
+            for (let i = 0; i < chores.length; i++) {
+                let chore = chores[i];
+                document.getElementById(chore).innerText = assignments[chore];
+            }
+
+            document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
+        }
+    }
+
+    update_page(current_offset());
+
+    let datepicker = document.getElementById("date");
+    datepicker.value = (new Date()).toISOString().split('T')[0];
+    datepicker.addEventListener("change", function (event) {
+        let date = new Date(datepicker.value);
+        let offset = date_to_offset(date);
+        update_page(offset);
+    });
+})();
+</script>
+
+</body>
+</html>
