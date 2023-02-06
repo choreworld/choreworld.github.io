@@ -12,6 +12,10 @@ h1, h2, h3, h4, p, label {
     padding: 10px;
 }
 
+label {
+    margin-bottom: 5px;
+}
+
 h3 {
     font-style: italic;
     text-decoration: unset;
