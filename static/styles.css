@@ -1,11 +1,11 @@
 @font-face {
   font-family: "comic-sans";
-  src: url("assets/comic.ttf");
+  src: url("/assets/comic.ttf");
 }
 
 body {
 	background-color: green;
-	background-image: url("assets/mop-girl.gif");
+	background-image: url("/assets/mop-girl.gif");
 	background-size: 10%;
 	font-family: 'comic-sans', Fallback, serif;
 	color: white;

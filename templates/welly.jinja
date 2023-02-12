@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>choreworld, Wellington</title>
-    <link rel="stylesheet" type="text/css" href="../styles.css">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="apple-touch-icon" href="../assets/dishes-square.png">
+    <link rel="stylesheet" type="text/css" href="{{ url_path("static/styles.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_path('static/welly.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_path("assets/favicon.png") }}">
+    <link rel="apple-touch-icon" href="{{ url_path("assets/dishes-square.png") }}">
 </head>
 <body>
 
@@ -49,7 +49,7 @@
 <p>choreworld v0.2 &copy; choreworld 2023</p>
 </footer>
 
-<script src="../chores.js"></script>
+<script src="{{ url_path('static/chores.js') }}"></script>
 <script>
 (function () {
     function update_page(offset) {
