@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>choreworld</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    
+        <link rel="icon" type="image/png" href="/assets/favicon.png">
+        <link rel="apple-touch-icon" href="/assets/dishes-square.png">
+    
+    
+    
+</head>
+<body>
+
+
+<main>
+
+<h1>Welcome to choreworld</h1>
+
+<img src="/assets/dishes.jpg" style="width: 20%;" alt="doing the dishes">
+
+
+
+
+<form class="datepicker">
+    <label for="date" class="datepicker-label">Select date</label>
+    <input id="date" name="date" type="date" class="datepicker-date">
+</form>
+
+
+<h2>Chores for week ending <span id="week-end">Sunday, 12 February 2023</span></h2>
+
+
+
+<div class="choregroup">
+    <h3>Whole flat</h2>
+    
+<dl id="chores-main" class="chores">
+
+    
+        
+<div class="chore">
+    <dt>Bins</dt>
+    <dd id="chore-main-bins-person">Dan</dd>
+</div>
+
+    
+        
+<div class="chore">
+    <dt>Kitchen</dt>
+    <dd id="chore-main-kitchen-person">Harry</dd>
+</div>
+
+    
+        
+<div class="chore">
+    <dt>Mop</dt>
+    <dd id="chore-main-mop-person">Sophie</dd>
+</div>
+
+    
+        
+<div class="chore">
+    <dt>Downstairs toilet and lounge</dt>
+    <dd id="chore-main-toilet-lounge-person">Millie</dd>
+</div>
+
+    
+        
+<div class="chore">
+    <dt>Vacuum</dt>
+    <dd id="chore-main-vacuum-person">Ashton</dd>
+</div>
+
+    
+
+</dl>
+
+</div>
+
+
+<div class="choregroup">
+    <h3>Upstairs</h2>
+    
+<dl id="chores-upstairs" class="chores">
+
+    
+        
+<div class="chore">
+    <dt>Upstairs bathroom</dt>
+    <dd id="chore-upstairs-upstairs-bathroom-person">Dan</dd>
+</div>
+
+    
+
+</dl>
+
+</div>
+
+
+<div class="choregroup">
+    <h3>Downstairs bedroom</h2>
+    
+<dl id="chores-downstairs-bedroom" class="chores">
+
+    
+        
+<div class="chore">
+    <dt>Ensuite</dt>
+    <dd id="chore-downstairs-bedroom-ensuite-person">Millie</dd>
+</div>
+
+    
+
+</dl>
+
+</div>
+
+
+<footer>
+<img src="/assets/cool-millie-pyramid.gif" style="width:30%;" alt="cool millie">
+<p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
+<p>choreworld v0.2 &copy; choreworld 2023</p>
+
+<div class="badges">
+    <img src="/badges/css.gif" alt="made with css">
+    <img src="/badges/4everfriend.gif" alt="friends 4 ever">
+    <a href="https://cyber.dabamos.de/88x31/" target="_blank">
+        <img src="/badges/2019.gif" alt="buttons">
+    </a>
+    <img src="/badges/kitten88.gif" alt="kitten">
+    <img src="/badges/hsajesusveg.gif" alt="jesus was a vegetarian">
+    <img src="/badges/jobsritchie.gif" alt="jobs and ritchie">
+    <img src="/badges/javascript.gif" alt="javascript now!">
+    <img src="/badges/yanknow.gif" alt="yankovic now">
+    <img src="/badges/proud_of_my_son.gif" alt="proud of my son">
+    <img src="/badges/powered.gif" alt="this site is powered by imagination">
+    <a href="https://www.win-rar.com" target="_blank">
+        <img src="/badges/rar_download.gif" alt="download winrar">
+    </a>
+    <a href="https://www.liberianobserver.com/" target="_blank">
+        <img src="/badges/wnliberia.gif" alt="liberia news">
+    </a>
+</div>
+</footer>
+
+
+<script src="/static/chores.js"></script>
+<script>
+function update_page(offset) {
+    const all_chores = {"downstairs-bedroom": [["ensuite"], ["Millie", "Ashton"]], "main": [["bins", "kitchen", "mop", "toilet-lounge", "vacuum"], ["Ashton", "Dan", "Harry", "Sophie", "Millie"]], "upstairs": [["upstairs-bathroom"], ["Dan", "Harry", "Sophie"]]};
+    for (const group in all_chores) {
+        const chores = all_chores[group][0];
+        const people = all_chores[group][1];
+        const assignments = assign_chores(offset, chores, people);
+        for (const chore in assignments) {
+            document
+                .getElementById(`chore-${group}-${chore}-person`)
+                .innerText = assignments[chore];
+        }
+    }
+
+    document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
+}
+
+document.getElementById("date")
+    .addEventListener("change", function(event) {
+        const date = new Date(event.target.value);
+        update_page(date_to_offset(date));
+    });
+</script>
+
+
+
+</body>
+</html>

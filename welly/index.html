@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>choreworld, Wellington</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    
+        <link rel="icon" type="image/png" href="/assets/favicon.png">
+        <link rel="apple-touch-icon" href="/assets/dishes-square.png">
+    
+    
+    <link rel="stylesheet" type="text/css" href="/static/welly.css">
+
+</head>
+<body>
+
+
+<main>
+
+<h1>Welcome to choreworld (Wellington edition)</h1>
+
+
+
+
+<form class="datepicker">
+    <label for="date" class="datepicker-label">Select date</label>
+    <input id="date" name="date" type="date" class="datepicker-date">
+</form>
+
+
+<h2>Chores for week ending <span id="week-end">Sunday, 12 February 2023</span></h2>
+
+
+
+
+<dl id="chores-main" class="chores">
+
+    
+        
+<div class="chore">
+    <dt>Bathroom</dt>
+    <dd id="chore-main-bathroom-person">Emma</dd>
+</div>
+
+    
+        
+<div class="chore">
+    <dt>Floors</dt>
+    <dd id="chore-main-floors-person">Charlotte</dd>
+</div>
+
+    
+        
+<div class="chore">
+    <dt>Misc</dt>
+    <dd id="chore-main-misc-person">Nick</dd>
+</div>
+
+    
+    
+<div class="chore">
+    <dt>Kitchen</dt>
+    <dd id="chore-main-kitchen-person">Alice</dd>
+</div>
+
+
+</dl>
+
+</main>
+
+<footer>
+<p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
+<p>choreworld v0.2 &copy; choreworld 2023</p>
+</footer>
+
+
+<script src="/static/chores.js"></script>
+<script>
+function update_page(offset) {
+    const all_chores = {"main": [["bathroom", "floors", "misc"], ["Emma", "Charlotte", "Nick"]]};
+    for (const group in all_chores) {
+        const chores = all_chores[group][0];
+        const people = all_chores[group][1];
+        const assignments = assign_chores(offset, chores, people);
+        for (const chore in assignments) {
+            document
+                .getElementById(`chore-${group}-${chore}-person`)
+                .innerText = assignments[chore];
+        }
+    }
+
+    document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
+}
+
+document.getElementById("date")
+    .addEventListener("change", function(event) {
+        const date = new Date(event.target.value);
+        update_page(date_to_offset(date));
+    });
+</script>
+
+
+
+</body>
+</html>
