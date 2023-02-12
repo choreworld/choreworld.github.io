@@ -173,14 +173,22 @@ class Builder(AbstractContextManager):
         self.render_template(template, path, **render_kwargs)
 
 
-@click.command()
+@click.group()
+def cli():
+    """
+    Generate chore.world
+    """
+    pass
+
+
+@cli.command()
 @click.option(
     '--output', '-o',
     help='Output directory',
     type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
     required=True,
 )
-def main(output: Path):
+def generate(output: Path):
     """
     Generate chore.world
     """
@@ -199,4 +207,4 @@ def main(output: Path):
 
 
 if __name__ == '__main__':
-    main()
+    cli()
