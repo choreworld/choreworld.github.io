@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: python3 -m pip install -r requirements.txt
       - name: Build site
-        run: ./choreworld.py --output html
+        run: ./choreworld.py generate --output html
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
