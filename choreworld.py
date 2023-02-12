@@ -206,5 +206,42 @@ def generate(output: Path):
         builder.render_chores('welly.yaml', 'welly.jinja', '/welly')
 
 
+def get_people(
+    chores: dict[ChoreGroup, tuple[list[Chore], list[str]]]
+) -> list[str]:
+    all_people = []
+    for _, people in chores.values():
+        all_people.extend(people)
+    return list(set(all_people))
+
+
+@cli.command()
+@click.option('--host', default='https://ntfy.sh')
+@click.option('--output', '-o', type=click.File('w'), default='-')
+@click.option('--indent', type=click.IntRange(min=0))
+def ntfy_urls(host: str, output: IO, indent: Optional[int]):
+    """
+    Generate NTFY endpoints for each person
+    """
+    import json
+    import uuid
+
+    config_paths = ('chch.yaml', 'welly.yaml')
+    path_people = {
+        path: get_people(load_chores(path))
+        for path in config_paths
+    }
+
+    endpoints = {
+        path: {
+            person: f'{host.rstrip("/")}/{uuid.uuid4()}'
+            for person in people
+        }
+        for path, people in path_people.items()
+    }
+
+    output.write(json.dumps(endpoints, indent=indent or None) + '\n')
+
+
 if __name__ == '__main__':
     cli()
