@@ -2,6 +2,8 @@ name: Deploy site
 on:
   push:
     branches: [master]
+  schedule:
+    - cron: '13 12 * * 0' # Sunday 12:13 UTC = Monday 00:13 (or 01:13 during DST) NZ time
 permissions:
   contents: write
 jobs:
