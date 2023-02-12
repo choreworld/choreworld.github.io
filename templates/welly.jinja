@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>choreworld, Wellington</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_path("static/styles.css") }}">
+{% extends "base.jinja" %}
+
+{% block title %}choreworld, Wellington{% endblock title %}
+
+{% block extrahead %}
     <link rel="stylesheet" type="text/css" href="{{ url_path('static/welly.css') }}">
-    <link rel="icon" type="image/png" href="{{ url_path("assets/favicon.png") }}">
-    <link rel="apple-touch-icon" href="{{ url_path("assets/dishes-square.png") }}">
-</head>
-<body>
+{% endblock extrahead %}
+
+{% block body %}
 
 <main>
 
@@ -93,5 +90,4 @@
 })();
 </script>
 
-</body>
-</html>
+{% endblock body %}
