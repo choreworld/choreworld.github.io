@@ -27,6 +27,9 @@ class Chore:
     id: str
     name: str
 
+    def __str__(self) -> str:
+        return self.id
+
     @classmethod
     def from_json(cls, d: Union[dict[str, str], str]) -> Chore:
         if isinstance(d, dict):
@@ -35,18 +38,34 @@ class Chore:
         return cls(d, d.title())
 
 
+@dataclass(frozen=True, eq=True)
+class ChoreGroup:
+    id: str
+    name: str
+
+    def __str__(self) -> str:
+        return self.id
+
+    @classmethod
+    def from_json(cls, id: str, d: dict) -> ChoreGroup:
+        return cls(
+            id=id,
+            name=d.get('name') or id.title(),
+        )
+
+
 def load_chores(
     config_filename: str
-) -> dict[str, tuple[list[Chore], list[str]]]:
+) -> dict[ChoreGroup, tuple[list[Chore], list[str]]]:
     with open(THISDIR / config_filename) as f:
         config = yaml.safe_load(f)
 
     return {
-        group: (
-            [Chore.from_json(chore) for chore in group_config['chores']],
-            group_config['people']
+        ChoreGroup.from_json(id, d): (
+            [Chore.from_json(chore) for chore in d['chores']],
+            d['people']
         )
-        for group, group_config in config.items()
+        for id, d in config.items()
     }
 
 
@@ -147,7 +166,7 @@ class Builder(AbstractContextManager):
         render_kwargs['current_weekend_date'] = fmtdate(sunday)
         render_kwargs['current_offset'] = current_offset
         render_kwargs['chores_json'] = {
-            group: ([chore.id for chore in chores], people)
+            group.id: ([chore.id for chore in chores], people)
             for group, (chores, people) in chores.items()
         }
 
@@ -175,15 +194,7 @@ def main(output: Path):
         with builder.open('/.nojekyll', 'w'):
             pass
 
-        builder.render_chores(
-            'chch.yaml', 'chch.jinja', '/',
-            choregroup_names={
-                'main': 'Whole flat',
-                'upstairs': 'Upstairs',
-                'downstairs-bedroom': 'Downstairs bedroom'
-            }
-        )
-
+        builder.render_chores('chch.yaml', 'chch.jinja', '/',)
         builder.render_chores('welly.yaml', 'welly.jinja', '/welly')
 
 

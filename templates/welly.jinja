@@ -18,7 +18,7 @@
 
 <h2>Chores for week ending <span id="week-end">{{ current_weekend_date }}</span></h2>
 
-{% set group = 'main' %}
+{% set group = choregroups.keys() | first %}
 {% set chores %}
     {% for chore, person in choregroups[group].items() %}
         {{ macros.chore(group, chore.id, chore.name, person) }}

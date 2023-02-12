@@ -19,12 +19,12 @@
 {% for group, assignments in choregroups.items() %}
 {% set chores %}
     {% for chore, person in assignments.items() %}
-        {{ macros.chore(group, chore.id, chore.name, person) }}
+        {{ macros.chore(group.id, chore.id, chore.name, person) }}
     {% endfor %}
 {% endset %}
 <div class="choregroup">
-    <h3>{{ choregroup_names[group] }}</h2>
-    {{ macros.chorelist(group, chores) }}
+    <h3>{{ group.name }}</h2>
+    {{ macros.chorelist(group.id, chores) }}
 </div>
 {% endfor %}
 
