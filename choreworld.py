@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from contextlib import AbstractContextManager
+from dataclasses import dataclass
 import datetime
 from pathlib import Path
 import shutil
@@ -12,6 +13,7 @@ from typing import IO, Optional, Sequence, Union
 import click
 from dateutil import tz
 import jinja2
+import yaml
 
 
 THISDIR = Path(__file__).parent
@@ -20,19 +22,32 @@ TZINFO = tz.gettz('Pacific/Auckland')
 START_WEEK = datetime.datetime(2021, 4, 11, tzinfo=TZINFO)
 
 
+@dataclass(frozen=True, eq=True)
 class Chore:
     id: str
     name: str
 
-    def __init__(self, id: str, name: Optional[str] = None):
-        self.id = id
-        self.name = name or id.title()
+    @classmethod
+    def from_json(cls, d: Union[dict[str, str], str]) -> Chore:
+        if isinstance(d, dict):
+            return cls(d['id'], d.get('name') or d['id'].title())
 
-    def __eq__(self, other) -> bool:
-        return self.id == other.id and self.name == other.name
+        return cls(d, d.title())
 
-    def __hash__(self) -> int:
-        return hash((self.id, self.name))
+
+def load_chores(
+    config_filename: str
+) -> dict[str, tuple[list[Chore], list[str]]]:
+    with open(THISDIR / config_filename) as f:
+        config = yaml.safe_load(f)
+
+    return {
+        group: (
+            [Chore.from_json(chore) for chore in group_config['chores']],
+            group_config['people']
+        )
+        for group, group_config in config.items()
+    }
 
 
 def assign_chores(
@@ -115,13 +130,14 @@ class Builder(AbstractContextManager):
 
     def render_chores(
         self,
-        chores: dict[str, tuple[Sequence[Chore], Sequence[str]]],
+        config: str,
         template: str,
         path: str,
         **render_kwargs
     ) -> None:
         sunday = week_sunday(get_current_date())
         current_offset = offset(sunday)
+        chores = load_chores(config)
 
         choregroups = {
             choregroup: assign_chores(current_offset, chores, people)
@@ -160,27 +176,7 @@ def main(output: Path):
             pass
 
         builder.render_chores(
-            {
-                'main': (
-                    [
-                        Chore('bins'),
-                        Chore('kitchen'),
-                        Chore('mop'),
-                        Chore('toilet-lounge', 'Downstairs toilet and lounge'),
-                        Chore('vacuum')
-                    ],
-                    ['Ashton', 'Dan', 'Harry', 'Sophie', 'Millie']
-                ),
-                'upstairs': (
-                    [Chore('upstairs-bathroom', 'Upstairs bathroom')],
-                    ['Dan', 'Harry', 'Sophie']
-                ),
-                'downstairs-bedroom': (
-                    [Chore('ensuite')],
-                    ['Millie', 'Ashton']
-                )
-            },
-            'chch.jinja', '/',
+            'chch.yaml', 'chch.jinja', '/',
             choregroup_names={
                 'main': 'Whole flat',
                 'upstairs': 'Upstairs',
@@ -188,19 +184,7 @@ def main(output: Path):
             }
         )
 
-        builder.render_chores(
-            {
-                'main': (
-                    [
-                        Chore('bathroom'),
-                        Chore('floors'),
-                        Chore('misc')
-                    ],
-                    ['Emma', 'Charlotte', 'Nick']
-                )
-            },
-            'welly.jinja', '/welly'
-        )
+        builder.render_chores('welly.yaml', 'welly.jinja', '/welly')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,9 @@
+main:
+  chores:
+    - bathroom
+    - floors
+    - misc
+  people:
+    - Emma
+    - Charlotte
+    - Nick
