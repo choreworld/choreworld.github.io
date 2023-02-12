@@ -1,0 +1,25 @@
+{% macro chorelist(id, content, class="chores") %}
+<dl id="{{ id }}" class="{{ class }}">
+{{ content }}
+</dl>
+{% endmacro %}
+
+{% macro chore(id, name, flattie, class="chore") %}
+<div class="{{ class }}">
+    <dt>{{ name }}</dt>
+    <dd id="chore-{{ id }}-person">{{ flattie }}</dd>
+</div>
+{% endmacro %}
+
+{% macro datepicker(id="date") %}
+<form class="datepicker">
+    <label for="date" class="datepicker-label">Select date</label>
+    <input id="{{ id }}" name="date" type="date" class="datepicker-date">
+</form>
+{% endmacro %}
+
+{% macro add_chores(chores) %}
+{% for chore, name in chores.items() %}
+    {{ chore(chore.id, chore.name, name) }}
+{% endfor %}
+{% endmacro %}

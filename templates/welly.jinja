@@ -12,82 +12,21 @@
 
 <h1>Welcome to choreworld (Wellington edition)</h1>
 
-<form>
-    <label for="date">Select date</label>
-    <input id="date" type="date" name="date">
-</form>
+<h2>Chores for week ending <span id="week-end">{{ current_weekend_date }}</span></h2>
 
-<h2>Chores for week ending <span id="week-end"></span></h2>
-
-<div class="chore">
-    <h3>Misc</h3>
-    <p id="misc"></p>
-</div>
-
-<div class="chore">
-    <h3>Floors</h3>
-    <p id="floors"></p>
-</div>
-
-<div class="chore">
-    <h3>Bathroom</h3>
-    <p id="bathroom"></p>
-</div>
-
-<div class="chore">
-    <h3>Kitchen</h3>
-    <p id="kitche">Alice</p>
-</div>
-
+{% import 'macros.jinja' as macros %}
+{% set chores %}
+    {% for chore, person in choregroups['main'].items() %}
+        {{ macros.chore(chore.id, chore.name, person) }}
+    {% endfor %}
+    {{ macros.chore('kitchen', 'Kitchen', 'Alice') }}
+{% endset %}
+{{ macros.chorelist('chores', chores) }}
 </main>
 
 <footer>
 <p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
 <p>choreworld v0.2 &copy; choreworld 2023</p>
 </footer>
-
-<script src="{{ url_path('static/chores.js') }}"></script>
-<script>
-(function () {
-    function update_page(offset) {
-        let all_chores = [
-            [
-                [
-                    "bathroom",
-                    "floors",
-                    "misc",
-                ],
-                [
-                    "Emma",
-                    "Charlotte",
-                    "Nick",
-                ]
-            ]
-        ];
-
-        for (let group = 0; group < all_chores.length; group++) {
-            let chores = all_chores[group][0];
-            let people = all_chores[group][1];
-            let assignments = assign_chores(offset, chores, people);
-            for (let i = 0; i < chores.length; i++) {
-                let chore = chores[i];
-                document.getElementById(chore).innerText = assignments[chore];
-            }
-
-            document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
-        }
-    }
-
-    update_page(current_offset());
-
-    let datepicker = document.getElementById("date");
-    datepicker.value = (new Date()).toISOString().split('T')[0];
-    datepicker.addEventListener("change", function (event) {
-        let date = new Date(datepicker.value);
-        let offset = date_to_offset(date);
-        update_page(offset);
-    });
-})();
-</script>
 
 {% endblock body %}

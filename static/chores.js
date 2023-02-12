@@ -1,4 +1,4 @@
-var START_WEEK = new Date(2021, 3, 11);
+var START_WEEK = new Date(2021, 3, 11); // Sunday 11 APRIL 2021 (note month is 0-indexed)
 
 function assign_chores(offset, chores, people) {
 	var assignments = {};
