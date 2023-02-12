@@ -1,0 +1,25 @@
+name: Deploy site
+on:
+  push:
+    branches: [master]
+permissions:
+  contents: write
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: python3 -m pip install -r requirements.txt
+      - name: Build site
+        run: ./choreworld.py --output html
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: html
+          branch: gh-pages
