@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import datetime
 from pathlib import Path
 import shutil
+import sys
 import tempfile
 from typing import IO, Optional, Sequence, Union
 
@@ -217,14 +218,33 @@ def get_people(
 
 @cli.command()
 @click.option('--host', default='https://ntfy.sh')
-@click.option('--output', '-o', type=click.File('w'), default='-')
+@click.option(
+    '--output', '-o', 'output_path',
+    type=click.Path(dir_okay=False, writable=True),
+    default='-'
+)
+@click.option('--existing', is_flag=True)
 @click.option('--indent', type=click.IntRange(min=0))
-def ntfy_urls(host: str, output: IO, indent: Optional[int]):
+def ntfy_urls(
+    host: str,
+    output_path: str,
+    indent: Optional[int],
+    existing: bool
+):
     """
     Generate NTFY endpoints for each person
     """
     import json
     import uuid
+
+    output = Path(output_path)
+    if existing:
+        if not output.exists():
+            raise click.ClickException(f'path does not exist: {output}')
+        with open(output) as f:
+            existing_endpoints = json.load(f)
+    else:
+        existing_endpoints = {}
 
     config_paths = ('chch.yaml', 'welly.yaml')
     path_people = {
@@ -232,15 +252,25 @@ def ntfy_urls(host: str, output: IO, indent: Optional[int]):
         for path in config_paths
     }
 
-    endpoints = {
-        path: {
-            person: f'{host.rstrip("/")}/{uuid.uuid4()}'
-            for person in people
-        }
-        for path, people in path_people.items()
-    }
+    endpoints: dict[str, dict[str, str]] = {}
+    for path, people in path_people.items():
+        path_endpoints = {}
+        existing_path_endpoints = existing_endpoints.get(path, {})
+        for person in people:
+            path_endpoints[person] = existing_path_endpoints.get(
+                person,
+                f'{host.rstrip("/")}/{uuid.uuid4()}'
+            )
+        endpoints[path] = path_endpoints
 
-    output.write(json.dumps(endpoints, indent=indent or None) + '\n')
+    def write(f):
+        f.write(json.dumps(endpoints, indent=indent or None) + '\n')
+
+    if output_path == '-':
+        write(sys.stdout)
+    else:
+        with open(output, 'w') as f:
+            write(f)
 
 
 @cli.command()
