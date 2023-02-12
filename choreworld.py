@@ -243,5 +243,48 @@ def ntfy_urls(host: str, output: IO, indent: Optional[int]):
     output.write(json.dumps(endpoints, indent=indent or None) + '\n')
 
 
+@cli.command()
+@click.argument('endpoints_file', nargs=1, type=click.File('r'))
+def notify(endpoints_file: IO):
+    import json
+    import requests
+
+    sunday = week_sunday(get_current_date())
+    current_offset = offset(sunday)
+
+    path_endpoints: dict[str, dict[str, str]] = json.load(endpoints_file)
+    for path, endpoints in path_endpoints.items():
+        assignments: dict[str, list[Chore]] = {}
+        for assigned in (
+            assign_chores(current_offset, c, p)
+            for c, p in load_chores(path).values()
+        ):
+            for chore, person in assigned.items():
+                assignments.setdefault(person, []).append(chore)
+
+        for person, chores in assignments.items():
+            endpoint = endpoints[person]
+            num_chores = len(chores)
+            if num_chores == 1:
+                chores_list = chores[0].name.lower()
+            elif num_chores == 2:
+                c1, c2 = chores
+                chores_list = f'{c1.name.lower()} and {c2.name.lower()}'
+            else:
+                chores_list = ', '.join(c.name for c in chores[:-1])
+                chores_list += f', and {chores[-1].name}'
+
+            print(f'Notifying {person} @ {endpoints[person]}: {chores_list}')
+
+            requests.post(
+                endpoint,
+                data=f'{person}, your chores for the week are: {chores_list}',
+                headers={
+                    'Title': 'choreworld',
+                    'Tags': 'broom,sparkles',
+                }
+            )
+
+
 if __name__ == '__main__':
     cli()
