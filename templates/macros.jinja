@@ -1,13 +1,13 @@
-{% macro chorelist(id, content, class="chores") %}
-<dl id="{{ id }}" class="{{ class }}">
+{% macro chorelist(group, content, class="chores") %}
+<dl id="chores-{{ group }}" class="{{ class }}">
 {{ content }}
 </dl>
 {% endmacro %}
 
-{% macro chore(id, name, flattie, class="chore") %}
+{% macro chore(group, id, name, flattie, class="chore") %}
 <div class="{{ class }}">
     <dt>{{ name }}</dt>
-    <dd id="chore-{{ id }}-person">{{ flattie }}</dd>
+    <dd id="chore-{{ group }}-{{ id }}-person">{{ flattie }}</dd>
 </div>
 {% endmacro %}
 
@@ -22,4 +22,31 @@
 {% for chore, name in chores.items() %}
     {{ chore(chore.id, chore.name, name) }}
 {% endfor %}
+{% endmacro %}
+
+{% macro view_week_script(datepicker_id='date') %}
+<script src="{{ url_path('static/chores.js') }}"></script>
+<script>
+function update_page(offset) {
+    const all_chores = {{ chores_json | tojson }};
+    for (const group in all_chores) {
+        const chores = all_chores[group][0];
+        const people = all_chores[group][1];
+        const assignments = assign_chores(offset, chores, people);
+        for (const chore in assignments) {
+            document
+                .getElementById(`chore-${group}-${chore}-person`)
+                .innerText = assignments[chore];
+        }
+    }
+
+    document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
+}
+
+document.getElementById("{{ datepicker_id }}")
+    .addEventListener("change", function(event) {
+        const date = new Date(event.target.value);
+        update_page(date_to_offset(date));
+    });
+</script>
 {% endmacro %}

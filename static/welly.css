@@ -6,6 +6,10 @@ body {
     color: white;
 }
 
+.datepicker-label {
+    background-color: #39FF14;
+}
+
 h1, h2, h3, h4, p, label {
     color: black;
     background-color: #39FF14;

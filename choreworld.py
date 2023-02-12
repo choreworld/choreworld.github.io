@@ -121,12 +121,17 @@ class Builder(AbstractContextManager):
         sunday = week_sunday(get_current_date())
         current_offset = offset(sunday)
 
-        render_kwargs['choregroups'] = {
+        choregroups = {
             choregroup: assign_chores(current_offset, chores, people)
             for choregroup, (chores, people) in chores.items()
         }
+        render_kwargs['choregroups'] = choregroups
         render_kwargs['current_weekend_date'] = fmtdate(sunday)
         render_kwargs['current_offset'] = current_offset
+        render_kwargs['chores_json'] = {
+            group: ([chore.id for chore in chores], people)
+            for group, (chores, people) in chores.items()
+        }
 
         self.render_template(template, path, **render_kwargs)
 

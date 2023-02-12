@@ -12,21 +12,27 @@
 
 <h1>Welcome to choreworld (Wellington edition)</h1>
 
+{% import 'macros.jinja' as macros with context %}
+
+{{ macros.datepicker() }}
+
 <h2>Chores for week ending <span id="week-end">{{ current_weekend_date }}</span></h2>
 
-{% import 'macros.jinja' as macros %}
+{% set group = 'main' %}
 {% set chores %}
-    {% for chore, person in choregroups['main'].items() %}
-        {{ macros.chore(chore.id, chore.name, person) }}
+    {% for chore, person in choregroups[group].items() %}
+        {{ macros.chore(group, chore.id, chore.name, person) }}
     {% endfor %}
-    {{ macros.chore('kitchen', 'Kitchen', 'Alice') }}
+    {{ macros.chore(group, 'kitchen', 'Kitchen', 'Alice') }}
 {% endset %}
-{{ macros.chorelist('chores', chores) }}
+{{ macros.chorelist(group, chores) }}
 </main>
 
 <footer>
 <p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
 <p>choreworld v0.2 &copy; choreworld 2023</p>
 </footer>
+
+{{ macros.view_week_script() }}
 
 {% endblock body %}
