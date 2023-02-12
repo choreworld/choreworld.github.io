@@ -156,6 +156,8 @@ def main(output: Path):
         builder.copy_dir(THISDIR / 'badges', '/badges')
         with builder.open('/CNAME', 'w') as f:
             f.write('chore.world\n')
+        with builder.open('/.nojekyll', 'w'):
+            pass
 
         builder.render_chores(
             {
