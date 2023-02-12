@@ -19,8 +19,10 @@
         {{ macros.chore(chore.id, chore.name, person) }}
     {% endfor %}
 {% endset %}
-<h3>{{ choregroup_names[group] }}</h2>
-{{ macros.chorelist(group, chores) }}
+<div class="choregroup">
+    <h3>{{ choregroup_names[group] }}</h2>
+    {{ macros.chorelist(group, chores) }}
+</div>
 {% endfor %}
 
 <footer>
