@@ -6,13 +6,13 @@
     <link rel="stylesheet" type="text/css" href="{{ url_path('static/welly.css') }}">
 {% endblock extrahead %}
 
+{% import 'macros.jinja' as macros with context %}
+
 {% block body %}
 
 <main>
 
 <h1>Welcome to choreworld (Wellington edition)</h1>
-
-{% import 'macros.jinja' as macros with context %}
 
 {{ macros.datepicker() }}
 
@@ -28,11 +28,8 @@
 {{ macros.chorelist(group, chores) }}
 </main>
 
-<footer>
-<p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
-<p>choreworld v0.2 &copy; choreworld 2023</p>
-</footer>
-
-{{ macros.view_week_script() }}
-
 {% endblock body %}
+
+{% block bodyend %}
+{{ macros.view_week_script() }}
+{% endblock bodyend %}
