@@ -16,15 +16,19 @@
 
 <h2>Chores for week ending <span id="week-end">{{ current_weekend_date }}</span></h2>
 
-{% for group, assignments in choregroups.items() %}
+{% for group_id, assignments in group_assignments.items() %}
 {% set chores %}
-    {% for chore, person in assignments.items() %}
-        {{ macros.chore(group.id, chore.id, chore.name, person) }}
+    {% for chore_id, person in assignments.items() %}
+        {{ macros.chore(
+            group_id,
+            chore_id,
+            chore_groups[group_id].chores[chore_id].name,
+            person) }}
     {% endfor %}
 {% endset %}
 <div class="choregroup">
-    <h3>{{ group.name }}</h2>
-    {{ macros.chorelist(group.id, chores) }}
+    <h3>{{ chore_groups[group_id].name }}</h2>
+    {{ macros.chorelist(group_id, chores) }}
 </div>
 {% endfor %}
 

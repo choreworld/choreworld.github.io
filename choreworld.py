@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
-from typing import IO, Optional, Sequence, Union
+from typing import IO, Iterable, Optional, Union
 
 import click
 from dateutil import tz
@@ -28,14 +28,10 @@ class Chore:
     id: str
     name: str
 
-    def __str__(self) -> str:
-        return self.id
-
     @classmethod
-    def from_json(cls, d: Union[dict[str, str], str]) -> Chore:
+    def from_dict(cls, d: Union[dict[str, str], str]) -> Chore:
         if isinstance(d, dict):
             return cls(d['id'], d.get('name') or d['id'].title())
-
         return cls(d, d.title())
 
 
@@ -43,40 +39,33 @@ class Chore:
 class ChoreGroup:
     id: str
     name: str
-
-    def __str__(self) -> str:
-        return self.id
-
-    @classmethod
-    def from_json(cls, id: str, d: dict) -> ChoreGroup:
-        return cls(
-            id=id,
-            name=d.get('name') or id.title(),
-        )
+    chores: dict[str, Chore]
+    people: list[str]
 
 
-def load_chores(
-    config_filename: str
-) -> dict[ChoreGroup, tuple[list[Chore], list[str]]]:
+def load_chores(config_filename: str) -> dict[str, ChoreGroup]:
     with open(THISDIR / config_filename) as f:
         config = yaml.safe_load(f)
 
     return {
-        ChoreGroup.from_json(id, d): (
-            [Chore.from_json(chore) for chore in d['chores']],
-            d['people']
+        group_id: ChoreGroup(
+            id=group_id,
+            name=group_data.get('name', group_id.title()),
+            chores={
+                (c := Chore.from_dict(d)).id: c
+                for d in group_data['chores']
+            },
+            people=group_data['people'],
         )
-        for id, d in config.items()
+        for group_id, group_data in config.items()
     }
 
 
-def assign_chores(
-    offset: int, chores: Sequence[Chore], people: Sequence[str]
-) -> dict[Chore, str]:
-    num_people = len(people)
+def assign_chores(offset: int, group: ChoreGroup) -> dict[str, str]:
+    num_people = len(group.people)
     return {
-        chore: people[(i + offset) % num_people]
-        for i, chore in enumerate(chores)
+        chore_id: group.people[(i + offset) % num_people]
+        for i, chore_id in enumerate(group.chores.keys())
     }
 
 
@@ -157,19 +146,22 @@ class Builder(AbstractContextManager):
     ) -> None:
         sunday = week_sunday(get_current_date())
         current_offset = offset(sunday)
-        chores = load_chores(config)
+        chore_groups = load_chores(config)
+        group_assignments = {
+            group_id: assign_chores(current_offset, group)
+            for group_id, group in chore_groups.items()
+        }
 
-        choregroups = {
-            choregroup: assign_chores(current_offset, chores, people)
-            for choregroup, (chores, people) in chores.items()
-        }
-        render_kwargs['choregroups'] = choregroups
-        render_kwargs['current_weekend_date'] = fmtdate(sunday)
-        render_kwargs['current_offset'] = current_offset
-        render_kwargs['chores_json'] = {
-            group.id: ([chore.id for chore in chores], people)
-            for group, (chores, people) in chores.items()
-        }
+        render_kwargs.update({
+            'chore_groups': chore_groups,
+            'group_assignments': group_assignments,
+            'current_weekend_date': fmtdate(sunday),
+            'current_offset': current_offset,
+            'chores_json': {
+                group_id: (list(group.chores.keys()), group.people)
+                for group_id, group in chore_groups.items()
+            }
+        })
 
         self.render_template(template, path, **render_kwargs)
 
@@ -207,12 +199,10 @@ def generate(output: Path):
         builder.render_chores('welly.yaml', 'welly.jinja', '/welly')
 
 
-def get_people(
-    chores: dict[ChoreGroup, tuple[list[Chore], list[str]]]
-) -> list[str]:
+def get_people(chore_groups: Iterable[ChoreGroup]) -> list[str]:
     all_people = []
-    for _, people in chores.values():
-        all_people.extend(people)
+    for group in chore_groups:
+        all_people.extend(group.people)
     return list(set(all_people))
 
 
@@ -248,7 +238,7 @@ def ntfy_urls(
 
     config_paths = ('chch.yaml', 'welly.yaml')
     path_people = {
-        path: get_people(load_chores(path))
+        path: get_people(load_chores(path).values())
         for path in config_paths
     }
 
@@ -281,18 +271,22 @@ def notify(endpoints_file: IO):
 
     sunday = week_sunday(get_current_date())
     current_offset = offset(sunday)
-
     path_endpoints: dict[str, dict[str, str]] = json.load(endpoints_file)
     for path, endpoints in path_endpoints.items():
-        assignments: dict[str, list[Chore]] = {}
-        for assigned in (
-            assign_chores(current_offset, c, p)
-            for c, p in load_chores(path).values()
-        ):
-            for chore, person in assigned.items():
-                assignments.setdefault(person, []).append(chore)
+        chore_groups = load_chores(path)
+        group_assignments = {
+            group_id: assign_chores(current_offset, group)
+            for group_id, group in chore_groups.items()
+        }
 
-        for person, chores in assignments.items():
+        person_assignments: dict[str, list[Chore]] = {}
+        for group_id, assignments in group_assignments.items():
+            for chore_id, person in assignments.items():
+                person_assignments.setdefault(person, []).append(
+                    chore_groups[group_id].chores[chore_id]
+                )
+
+        for person, chores in person_assignments.items():
             endpoint = endpoints[person]
             num_chores = len(chores)
             if num_chores == 1:
