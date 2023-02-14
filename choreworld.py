@@ -310,5 +310,24 @@ def notify(endpoints_file: IO):
             )
 
 
+@cli.command()
+@click.argument('endpoints_file', nargs=1, type=click.File('r'))
+def notify_chch_bins(endpoints_file):
+    import json
+    import requests
+
+    main_group = load_chores('chch.yaml')['main']
+    current_offset = offset(week_sunday(get_current_date()))
+    assignments = assign_chores(current_offset, main_group)
+    bin_person = assignments['bins']
+    endpoint = json.load(endpoints_file)['chch.yaml'][bin_person]
+
+    requests.post(
+        endpoint,
+        data=f'{bin_person}, bins go out tonight!',
+        headers={'Title': 'choreworld', 'Tags': 'wastebasket,sparkles'}
+    )
+
+
 if __name__ == '__main__':
     cli()
