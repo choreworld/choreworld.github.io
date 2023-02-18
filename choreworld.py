@@ -174,6 +174,14 @@ def cli():
     pass
 
 
+def this_week_bins() -> tuple[str, str]:
+    # On Wednesday 15 February 2023 it was green and yellow bins. Yellow/red
+    # bins alternate each week.
+    FIRST_WEEK = datetime.datetime(2023, 2, 15, tzinfo=TZINFO)
+    week_num = (week_sunday(get_current_date()) - FIRST_WEEK).days // 7
+    return 'green', 'red' if week_num % 2 else 'yellow'
+
+
 @cli.command()
 @click.option(
     '--output', '-o',
@@ -195,7 +203,8 @@ def generate(output: Path):
         with builder.open('/.nojekyll', 'w'):
             pass
 
-        builder.render_chores('chch.yaml', 'chch.jinja', '/',)
+        builder.render_chores('chch.yaml', 'chch.jinja', '/',
+                              bins=this_week_bins())
         builder.render_chores('welly.yaml', 'welly.jinja', '/welly')
 
 
@@ -308,14 +317,6 @@ def notify(endpoints_file: IO):
                     'Tags': 'broom,sparkles',
                 }
             )
-
-
-def this_week_bins() -> tuple[str, str]:
-    # On Wednesday 15 February 2023 it was green and yellow bins. Yellow/red
-    # bins alternate each week.
-    FIRST_WEEK = datetime.datetime(2023, 2, 15, tzinfo=TZINFO)
-    week_num = (week_sunday(get_current_date()) - FIRST_WEEK).days // 7
-    return 'green', 'red' if week_num % 2 else 'yellow'
 
 
 @cli.command()

@@ -19,11 +19,11 @@
 {% for group_id, assignments in group_assignments.items() %}
 {% set chores %}
     {% for chore_id, person in assignments.items() %}
-        {{ macros.chore(
-            group_id,
-            chore_id,
-            chore_groups[group_id].chores[chore_id].name,
-            person) }}
+        {% set chorename = chore_groups[group_id].chores[chore_id].name %}
+        {% if group_id == 'main' and chore_id == 'bins' %}
+            {% set chorename = 'Bins (%s and %s)' % (bins[0], bins[1]) %}
+        {% endif %}
+        {{ macros.chore(group_id, chore_id, chorename, person) }}
     {% endfor %}
 {% endset %}
 <div class="choregroup">
