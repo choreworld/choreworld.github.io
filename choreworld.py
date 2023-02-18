@@ -310,6 +310,14 @@ def notify(endpoints_file: IO):
             )
 
 
+def this_week_bins() -> tuple[str, str]:
+    # On Wednesday 15 February 2023 it was green and yellow bins. Yellow/red
+    # bins alternate each week.
+    FIRST_WEEK = datetime.datetime(2023, 2, 15, tzinfo=TZINFO)
+    week_num = (week_sunday(get_current_date()) - FIRST_WEEK).days // 7
+    return 'green', 'red' if week_num % 2 else 'yellow'
+
+
 @cli.command()
 @click.argument('endpoints_file', nargs=1, type=click.File('r'))
 def notify_chch_bins(endpoints_file):
@@ -321,11 +329,13 @@ def notify_chch_bins(endpoints_file):
     assignments = assign_chores(current_offset, main_group)
     bin_person = assignments['bins']
     endpoint = json.load(endpoints_file)['chch.yaml'][bin_person]
-
+    bin1, bin2 = this_week_bins()
     requests.post(
         endpoint,
-        data=f'{bin_person}, bins go out tonight!',
-        headers={'Title': 'choreworld', 'Tags': 'wastebasket,sparkles'}
+        data=f'{bin_person}, {bin1} and {bin2} bins go out tonight!',
+        headers={
+            'Title': 'choreworld',
+            'Tags': f'wastebasket,{bin1}_square,{bin2}_square'}
     )
 
 
