@@ -126,9 +126,13 @@ class Builder(AbstractContextManager):
             'url_path': self.url_path,
         }
         kw.update(kwargs)
-        destdir = self.tempdir / path.lstrip('/')
-        destdir.mkdir(parents=True, exist_ok=True)
-        with open(destdir / 'index.html', 'w') as f:
+        if path.endswith('/'):
+            dest = self.tempdir / path.lstrip('/') / 'index.html'
+        else:
+            dest = self.tempdir / path.lstrip('/')
+
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with dest.open('w') as f:
             f.write(self.env.get_template(template).render(**kw))
 
     def copy_dir(self, dir: Union[str, Path], dest_path: str) -> None:
@@ -205,7 +209,9 @@ def generate(output: Path):
 
         builder.render_chores('chch.yaml', 'chch.jinja', '/',
                               bins=this_week_bins())
-        builder.render_chores('welly.yaml', 'welly.jinja', '/welly')
+        builder.render_chores('welly.yaml', 'welly.jinja', '/welly/')
+
+        builder.render_template('404.jinja', '/404.html')
 
 
 def get_people(chore_groups: Iterable[ChoreGroup]) -> list[str]:

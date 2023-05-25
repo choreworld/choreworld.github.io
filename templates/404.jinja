@@ -1,0 +1,29 @@
+{% extends "base.jinja" %}
+
+{% block title %}choreworld{% endblock title %}
+
+{% block extrahead %}
+    <style>
+        body {
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        img {
+            width: 100%;
+        }
+    </style>
+{% endblock extrahead %}
+
+{% block body %}
+
+<h1>Not found</h1>
+<p>The requested URL could not be found :(</p>
+<ul>
+    <li><a href="{{ url_path('/') }}">chch</a></li>
+    <li><a href="{{ url_path('/welly') }}">welly</a></li>
+</ul>
+
+<img src="{{ url_path('assets/cool-millie-pyramid.gif') }}" alt="cool millie">
+
+{% endblock body %}
