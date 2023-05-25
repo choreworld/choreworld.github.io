@@ -20,7 +20,7 @@ form {
 	padding-top: 10px;
 }
 
-p {
+p, ul {
 	background-color: yellow;
 }
 
