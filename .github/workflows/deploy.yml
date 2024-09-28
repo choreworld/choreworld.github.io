@@ -20,7 +20,7 @@ jobs:
       - name: Build site
         run: uv run --locked choreworld.py generate --output html
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4.6.4
         with:
           folder: html
           branch: gh-pages
