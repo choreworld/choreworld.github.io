@@ -27,26 +27,26 @@
 {% macro view_week_script(datepicker_id='date') %}
 <script src="{{ url_path('static/chores.js') }}"></script>
 <script>
-function update_page(offset) {
-    const all_chores = {{ chores_json | tojson }};
-    for (const group in all_chores) {
-        const chores = all_chores[group][0];
-        const people = all_chores[group][1];
-        const assignments = assign_chores(offset, chores, people);
+function updatePage(offset) {
+    const allChores = {{ chores_json | tojson }};
+    for (const group in allChores) {
+        const [chores, people] = allChores[group];
+        const assignments = assignChores(offset, chores, people);
         for (const chore in assignments) {
-            document
-                .getElementById(`chore-${group}-${chore}-person`)
-                .innerText = assignments[chore];
+            const personElem = document.getElementById(`chore-${group}-${chore}-person`);
+            if (personElem !== null) {
+                personElem.innerText = assignments[chore];
+            }
         }
     }
 
-    document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
+    document.getElementById("week-end").innerText = endOfWeek(offset).toDateString();
 }
 
 document.getElementById("{{ datepicker_id }}")
-    .addEventListener("change", function(event) {
+    ?.addEventListener("change", function(event) {
         const date = new Date(event.target.value);
-        update_page(date_to_offset(date));
+        updatePage(dateToOffset(date));
     });
 </script>
 {% endmacro %}
