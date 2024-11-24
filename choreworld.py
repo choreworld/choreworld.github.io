@@ -19,7 +19,10 @@ import yaml
 
 THISDIR = Path(__file__).parent
 
-TZINFO = tz.gettz('Pacific/Auckland')
+TZNAME = 'Pacific/Auckland'
+TZINFO = tz.gettz(TZNAME)
+if not TZINFO:
+    raise RuntimeError(f'Could not get timezone info for {TZNAME}')
 START_WEEK = datetime.datetime(2021, 4, 11, tzinfo=TZINFO)
 
 
