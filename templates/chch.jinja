@@ -39,25 +39,30 @@
 {% endblock body %}
 
 {% block footer %}
+
+{% macro badge(name, alt) %}
+    <img src="{{ url_path('badges/' + name) }}" alt="{{ alt }}">
+{% endmacro %}
+
 {{  super() }}
 <div class="badges">
-    <img src="{{ url_path('badges/css.gif') }}" alt="made with css">
-    <img src="{{ url_path('badges/4everfriend.gif') }}" alt="friends 4 ever">
+    {{ badge("css.gif", "made with css") }}
+    {{ badge("4everfriend.gif", "friends 4 ever") }}
     <a href="https://cyber.dabamos.de/88x31/" target="_blank">
-        <img src="{{ url_path('badges/2019.gif') }}" alt="buttons">
+        {{ badge("2019.gif", "buttons") }}
     </a>
-    <img src="{{ url_path('badges/kitten88.gif') }}" alt="kitten">
-    <img src="{{ url_path('badges/hsajesusveg.gif') }}" alt="jesus was a vegetarian">
-    <img src="{{ url_path('badges/jobsritchie.gif') }}" alt="jobs and ritchie">
-    <img src="{{ url_path('badges/javascript.gif') }}" alt="javascript now!">
-    <img src="{{ url_path('badges/yanknow.gif') }}" alt="yankovic now">
-    <img src="{{ url_path('badges/proud_of_my_son.gif') }}" alt="proud of my son">
-    <img src="{{ url_path('badges/powered.gif') }}" alt="this site is powered by imagination">
+    {{ badge("kitten88.gif", "kitten") }}
+    {{ badge("hsajesusveg.gif", "jesus was a vegetarian") }}
+    {{ badge("jobsritchie.gif", "jobs and ritchie") }}
+    {{ badge("javascript.gif", "javascript now!") }}
+    {{ badge("yanknow.gif", "yankovic now") }}
+    {{ badge("proud_of_my_son.gif", "proud of my son") }}
+    {{ badge("powered.gif", "this site is powered by imagination") }}
     <a href="https://www.win-rar.com" target="_blank">
-        <img src="{{ url_path('badges/rar_download.gif') }}" alt="download winrar">
+        {{ badge("rar_download.gif", "download winrar") }}
     </a>
     <a href="https://www.liberianobserver.com/" target="_blank">
-        <img src="{{ url_path('badges/wnliberia.gif') }}" alt="liberia news">
+        {{ badge("wnliberia.gif", "liberia news") }}
     </a>
 </div>
 {% endblock footer %}
