@@ -141,29 +141,56 @@
 
 
 
+
+
+
 <footer class="info-footer">
 <p><a href="https://github.com/choreworld/choreworld.github.io/issues">Feedback</a></p>
 <p>choreworld v0.3 &copy; choreworld 2023</p>
 </footer>
 
 <div class="badges">
+    
     <img src="/badges/css.gif" alt="made with css">
+
+    
     <img src="/badges/4everfriend.gif" alt="friends 4 ever">
+
     <a href="https://cyber.dabamos.de/88x31/" target="_blank">
-        <img src="/badges/2019.gif" alt="buttons">
+        
+    <img src="/badges/2019.gif" alt="buttons">
+
     </a>
+    
     <img src="/badges/kitten88.gif" alt="kitten">
+
+    
     <img src="/badges/hsajesusveg.gif" alt="jesus was a vegetarian">
+
+    
     <img src="/badges/jobsritchie.gif" alt="jobs and ritchie">
+
+    
     <img src="/badges/javascript.gif" alt="javascript now!">
+
+    
     <img src="/badges/yanknow.gif" alt="yankovic now">
+
+    
     <img src="/badges/proud_of_my_son.gif" alt="proud of my son">
+
+    
     <img src="/badges/powered.gif" alt="this site is powered by imagination">
+
     <a href="https://www.win-rar.com" target="_blank">
-        <img src="/badges/rar_download.gif" alt="download winrar">
+        
+    <img src="/badges/rar_download.gif" alt="download winrar">
+
     </a>
     <a href="https://www.liberianobserver.com/" target="_blank">
-        <img src="/badges/wnliberia.gif" alt="liberia news">
+        
+    <img src="/badges/wnliberia.gif" alt="liberia news">
+
     </a>
 </div>
 
@@ -172,26 +199,26 @@
 
 <script src="/static/chores.js"></script>
 <script>
-function update_page(offset) {
-    const all_chores = {"downstairs-bedroom": [["ensuite"], ["Millie", "Ashton"]], "main": [["bins", "kitchen", "mop", "toilet-lounge", "vacuum"], ["Ashton", "Dan", "Harry", "Sophie", "Millie"]], "upstairs": [["upstairs-bathroom"], ["Dan", "Harry", "Sophie"]]};
-    for (const group in all_chores) {
-        const chores = all_chores[group][0];
-        const people = all_chores[group][1];
-        const assignments = assign_chores(offset, chores, people);
+function updatePage(offset) {
+    const allChores = {"downstairs-bedroom": [["ensuite"], ["Millie", "Ashton"]], "main": [["bins", "kitchen", "mop", "toilet-lounge", "vacuum"], ["Ashton", "Dan", "Harry", "Sophie", "Millie"]], "upstairs": [["upstairs-bathroom"], ["Dan", "Harry", "Sophie"]]};
+    for (const group in allChores) {
+        const [chores, people] = allChores[group];
+        const assignments = assignChores(offset, chores, people);
         for (const chore in assignments) {
-            document
-                .getElementById(`chore-${group}-${chore}-person`)
-                .innerText = assignments[chore];
+            const personElem = document.getElementById(`chore-${group}-${chore}-person`);
+            if (personElem !== null) {
+                personElem.innerText = assignments[chore];
+            }
         }
     }
 
-    document.getElementById("week-end").innerText = end_of_week(offset).toDateString();
+    document.getElementById("week-end").innerText = endOfWeek(offset).toDateString();
 }
 
 document.getElementById("date")
-    .addEventListener("change", function(event) {
+    ?.addEventListener("change", function(event) {
         const date = new Date(event.target.value);
-        update_page(date_to_offset(date));
+        updatePage(dateToOffset(date));
     });
 </script>
 
