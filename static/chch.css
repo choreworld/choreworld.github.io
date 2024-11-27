@@ -10,22 +10,6 @@ body {
     font-family: 'comic-sans', Fallback, serif;
 }
 
-h1, h2 {
-    background-color: yellow;
-}
-
-p, ul {
-    background-color: yellow;
-}
-
-div.choregroup {
-    background-color: yellow;
-}
-
-.datepicker-label {
-    background-color: yellow;
-}
-
 .badges {
     display: flex;
     flex-wrap: wrap;

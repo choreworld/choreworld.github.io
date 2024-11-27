@@ -1,3 +1,7 @@
+:root {
+    --main-bg-color: #39FF14;
+}
+
 body {
     background-color: darkblue;
     background-image: url("../assets/aliens-animated.gif");
@@ -5,16 +9,7 @@ body {
     font-family: monospace;
 }
 
-.datepicker-label {
-    background-color: #39FF14;
-}
-
-h1, h2, h3, h4, p, label {
-    background-color: #39FF14;
-}
-
 dl.chores div {
-    background-color: #39FF14;
     min-width: 25%;
     padding: 40px;
 }

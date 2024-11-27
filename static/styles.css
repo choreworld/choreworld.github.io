@@ -1,3 +1,7 @@
+:root {
+	--main-bg-color: yellow;
+}
+
 main, footer, form {
 	display: flex;
 	flex-direction: column;
@@ -12,7 +16,12 @@ h1, h2 {
 	text-decoration: underline;
 }
 
+h1, h2, h3, h4, h5, h6, p, ul, label {
+	background-color: var(--main-bg-color);
+}
+
 div.choregroup {
+	background-color: var(--main-bg-color);
 	min-width: 25%;
 	padding: 20px;
 	margin-bottom: 20px;
@@ -20,11 +29,13 @@ div.choregroup {
 }
 
 .datepicker-label {
+	background-color: var(--main-bg-color);
 	padding: 5px;
 	margin-bottom: 10px;
 }
 
 dl.chores div {
+	background-color: var(--main-bg-color);
 	text-align: center;
 	margin-bottom: 20px;
 }
