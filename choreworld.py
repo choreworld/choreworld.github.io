@@ -91,13 +91,13 @@ def fmtdate(date: datetime.datetime) -> str:
 
 class Builder(AbstractContextManager):
     output_dir: Path
-    env: jinja2.Environment
+    template_env: jinja2.Environment
     tempdir: Path
     _tempdir: tempfile.TemporaryDirectory
 
     def __init__(self, output_dir: Path):
         self.output_dir = Path(output_dir)
-        self.env = jinja2.Environment(
+        self.template_env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(THISDIR / 'templates'),
             autoescape=jinja2.select_autoescape()
         )
@@ -119,6 +119,24 @@ class Builder(AbstractContextManager):
     def url_path(self, path: str) -> str:
         return '/' + path.lstrip('/')
 
+    def open(
+        self,
+        path: str,
+        mode='w',
+        *,
+        index: bool | None = None,
+        **kwargs
+    ) -> IO:
+        if index is None:
+            index = path.endswith('/')
+
+        dest = self.tempdir / path.lstrip('/')
+        if index:
+            dest /= 'index.html'
+
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        return dest.open(mode, **kwargs)
+
     def render_template(
         self,
         template: str,
@@ -129,20 +147,11 @@ class Builder(AbstractContextManager):
             'url_path': self.url_path,
         }
         kw.update(kwargs)
-        if path.endswith('/'):
-            dest = self.tempdir / path.lstrip('/') / 'index.html'
-        else:
-            dest = self.tempdir / path.lstrip('/')
-
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        with dest.open('w') as f:
-            f.write(self.env.get_template(template).render(**kw))
+        with self.open(path) as f:
+            f.write(self.template_env.get_template(template).render(**kw))
 
     def copy_dir(self, dir: Union[str, Path], dest_path: str) -> None:
         shutil.copytree(dir, self.tempdir / dest_path.lstrip('/'))
-
-    def open(self, path: str, *args, **kwargs) -> IO:
-        return open(self.tempdir / path.lstrip('/'), *args, **kwargs)
 
     def render_chores(
         self,
@@ -202,19 +211,23 @@ def generate(output: Path):
     """
 
     with Builder(output) as builder:
-        builder.copy_dir(THISDIR / 'static', '/static')
-        builder.copy_dir(THISDIR / 'assets', '/assets')
-        builder.copy_dir(THISDIR / 'badges', '/badges')
-        with builder.open('/CNAME', 'w') as f:
-            f.write('chore.world\n')
-        with builder.open('/.nojekyll', 'w'):
-            pass
+        build_site(builder)
 
-        builder.render_chores('chch.yaml', 'chch.jinja', '/',
-                              bins=this_week_bins())
-        builder.render_chores('welly.yaml', 'welly.jinja', '/welly/')
 
-        builder.render_template('404.jinja', '/404.html')
+def build_site(builder: Builder) -> None:
+    builder.copy_dir(THISDIR / 'static', '/static')
+    builder.copy_dir(THISDIR / 'assets', '/assets')
+    builder.copy_dir(THISDIR / 'badges', '/badges')
+    with builder.open('/CNAME') as f:
+        f.write('chore.world\n')
+    with builder.open('/.nojekyll'):
+        pass
+
+    builder.render_chores(
+        'chch.yaml', 'chch.jinja', '/', bins=this_week_bins()
+    )
+    builder.render_chores('welly.yaml', 'welly.jinja', '/welly/')
+    builder.render_template('404.jinja', '/404.html')
 
 
 def get_people(chore_groups: Iterable[ChoreGroup]) -> list[str]:
