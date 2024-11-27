@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "comic-sans";
+  src: url("/assets/comic.ttf");
+}
+
+body {
+    background-color: green;
+    background-image: url("/assets/mop-girl.gif");
+    background-size: 10%;
+    font-family: 'comic-sans', Fallback, serif;
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.badges > * {
+    margin: 5px;
+}

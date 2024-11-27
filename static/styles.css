@@ -1,13 +1,5 @@
-@font-face {
-  font-family: "comic-sans";
-  src: url("/assets/comic.ttf");
-}
-
-body {
-	background-color: green;
-	background-image: url("/assets/mop-girl.gif");
-	background-size: 10%;
-	font-family: 'comic-sans', Fallback, serif;
+:root {
+	--main-bg-color: yellow;
 }
 
 main, footer, form {
@@ -20,30 +12,30 @@ form {
 	padding-top: 10px;
 }
 
-p, ul {
-	background-color: yellow;
-}
-
 h1, h2 {
-	background-color: yellow;
 	text-decoration: underline;
 }
 
+h1, h2, h3, h4, h5, h6, p, ul, label {
+	background-color: var(--main-bg-color);
+}
+
 div.choregroup {
+	background-color: var(--main-bg-color);
 	min-width: 25%;
 	padding: 20px;
-	background-color: yellow;
-	text-align: center;
 	margin-bottom: 20px;
+	text-align: center;
 }
 
 .datepicker-label {
-	background-color: yellow;
+	background-color: var(--main-bg-color);
 	padding: 5px;
 	margin-bottom: 10px;
 }
 
 dl.chores div {
+	background-color: var(--main-bg-color);
 	text-align: center;
 	margin-bottom: 20px;
 }
@@ -55,15 +47,4 @@ dl.chores dt {
 
 dl.chores dd {
 	margin: 0;
-}
-
-.badges {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	align-items: flex-start;
-}
-
-.badges > * {
-	margin: 5px;
 }
