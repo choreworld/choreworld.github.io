@@ -205,6 +205,8 @@ def this_week_bins() -> tuple[str, str]:
     help='Output directory',
     type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
     required=True,
+    default='html',
+    show_default=True,
 )
 def generate(output: Path):
     """
