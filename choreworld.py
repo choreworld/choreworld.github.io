@@ -305,7 +305,11 @@ def notify(endpoints_file: IO):
                 )
 
         for person, chores in person_assignments.items():
-            endpoint = endpoints[person]
+            endpoint = endpoints.get(person)
+            if not endpoint:
+                print(f'Warning: no endpoint for {person}, skipping')
+                continue
+
             num_chores = len(chores)
             if num_chores == 1:
                 chores_list = chores[0].name.lower()
@@ -317,7 +321,6 @@ def notify(endpoints_file: IO):
                 chores_list += f', and {chores[-1].name}'
 
             print(f'Notifying {person} @ {endpoints[person]}: {chores_list}')
-
             requests.post(
                 endpoint,
                 data=f'{person}, your chores for the week are: {chores_list}',
@@ -338,7 +341,11 @@ def notify_chch_bins(endpoints_file):
     current_offset = offset(week_sunday(get_current_date()))
     assignments = assign_chores(current_offset, main_group)
     bin_person = assignments['bins']
-    endpoint = json.load(endpoints_file)['chch.yaml'][bin_person]
+    endpoint = json.load(endpoints_file)['chch.yaml'].get(bin_person)
+    if not endpoint:
+        print(f'Warning: no endpoint for {bin_person}, not notifying')
+        return
+
     bin1, bin2 = this_week_bins()
     requests.post(
         endpoint,
