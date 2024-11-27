@@ -2,7 +2,9 @@
 
 {% block title %}choreworld{% endblock title %}
 
-{% block extrahead %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_path('static/chch.css') }}">
     <style>
         body {
             margin: 0 auto;
@@ -13,7 +15,7 @@
             width: 100%;
         }
     </style>
-{% endblock extrahead %}
+{% endblock head %}
 
 {% block body %}
 

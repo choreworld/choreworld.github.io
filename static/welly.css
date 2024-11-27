@@ -3,7 +3,6 @@ body {
     background-image: url("../assets/aliens-animated.gif");
     background-size: 20%;
     font-family: monospace;
-    color: white;
 }
 
 .datepicker-label {
@@ -11,28 +10,17 @@ body {
 }
 
 h1, h2, h3, h4, p, label {
-    color: black;
     background-color: #39FF14;
-    padding: 10px;
 }
 
 dl.chores div {
     background-color: #39FF14;
     min-width: 25%;
-    text-align: center;
-    margin-bottom: 20px;
     padding: 40px;
 }
 
 dl.chores dt {
     font-size: large;
-    color: black;
     font-weight: bold;
     font-style: italic;
-    margin-bottom: 20px;
-}
-
-dl.chores dd {
-    color: black;
-    margin: 0;
 }

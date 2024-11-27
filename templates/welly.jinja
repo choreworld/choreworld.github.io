@@ -1,12 +1,11 @@
-{% extends "base.jinja" %}
+{% extends "chores.jinja" %}
 
 {% block title %}choreworld, Wellington{% endblock title %}
 
-{% block extrahead %}
+{% block head %}
+    {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_path('static/welly.css') }}">
-{% endblock extrahead %}
-
-{% import 'macros.jinja' as macros with context %}
+{% endblock head %}
 
 {% block body %}
 
