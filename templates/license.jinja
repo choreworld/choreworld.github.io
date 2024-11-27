@@ -1,0 +1,36 @@
+{% extends "base.jinja" %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        :root {
+            --main-bg-color: rgba(157, 185, 44, .7);
+        }
+
+        body {
+            background-image: url("{{ url_path('assets/dishes.jpg') }}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+        }
+
+        pre {
+            background-color: var(--main-bg-color);
+            padding: 10px;
+            font-weight: bold;
+        }
+    </style>
+{% endblock head %}
+
+{% block body %}
+
+<main>
+    <h1>choreworld open-source license</h1>
+    <p>
+        <pre>
+{{ license_text_escaped -}}
+</pre>
+    </p>
+</main>
+
+{% endblock body %}

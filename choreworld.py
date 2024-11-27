@@ -6,6 +6,7 @@ from contextlib import AbstractContextManager
 from dataclasses import dataclass
 import datetime
 from pathlib import Path
+import re
 import shutil
 import sys
 import tempfile
@@ -228,6 +229,25 @@ def build_site(builder: Builder) -> None:
     )
     builder.render_chores('welly.yaml', 'welly.jinja', '/welly/')
     builder.render_template('404.jinja', '/404.html')
+    builder.render_template(
+        'license.jinja',
+        '/license/',
+        license_text_escaped=escape_license_text(),
+    )
+
+
+def escape_license_text() -> str:
+    text = THISDIR.joinpath("LICENSE").read_text()
+
+    # Just escape <...> in the text and wrap URLs in links (I don't think
+    # there is anything else in the text that needs escaping)
+    def sub(match: re.Match) -> str:
+        content = match[1]
+        if content.startswith('http'):
+            content = f'<a href="{content}" target="_blank">{content}</a>'
+        return f'&lt;{content}&gt;'
+
+    return re.sub(r'<([^<>]+)>', sub, text)
 
 
 def get_people(chore_groups: Iterable[ChoreGroup]) -> list[str]:
