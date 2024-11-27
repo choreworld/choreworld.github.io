@@ -8,11 +8,10 @@ main:
       name: Downstairs toilet and lounge
     - vacuum
   people:
-    - Ashton
     - Dan
     - Harry
+    - Joshua
     - Sophie
-    - Millie
 upstairs:
   chores:
     - id: upstairs-bathroom
@@ -21,10 +20,3 @@ upstairs:
     - Dan
     - Harry
     - Sophie
-downstairs-bedroom:
-  name: Downstairs bedroom
-  chores:
-    - ensuite
-  people:
-    - Millie
-    - Ashton
