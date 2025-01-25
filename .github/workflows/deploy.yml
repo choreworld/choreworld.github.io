@@ -4,10 +4,8 @@ on:
     branches: [master]
   schedule:
     - cron: '13 12 * * 0' # Sunday 12:13 UTC = Monday 00:13 (or 01:13 during DST) NZ time
-permissions:
-  contents: write
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -19,8 +17,20 @@ jobs:
           enable-cache: true
       - name: Build site
         run: uv run --locked choreworld.py generate --output html
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          folder: html
-          branch: gh-pages
+          path: html
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub pages
+        id: deployment
+        uses: actions/deploy-pages@v4
