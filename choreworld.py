@@ -221,8 +221,6 @@ def build_site(builder: Builder) -> None:
     builder.copy_dir(THISDIR / 'static', '/static')
     builder.copy_dir(THISDIR / 'assets', '/assets')
     builder.copy_dir(THISDIR / 'badges', '/badges')
-    with builder.open('/CNAME') as f:
-        f.write('chore.world\n')
     with builder.open('/.nojekyll'):
         pass
 
