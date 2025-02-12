@@ -2,7 +2,7 @@
 	--main-bg-color: yellow;
 }
 
-main, header, footer, form {
+main, footer, form {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
